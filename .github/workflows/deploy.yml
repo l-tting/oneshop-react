@@ -19,7 +19,7 @@ jobs:
 
       - name: Build React Docker image
         run: |
-          docker build -t lettting/oneshop-react:latest ./vite-project
+          docker build -t lettting/oneshop-react:latest .
           docker push lettting/oneshop-react:latest
 
       - name: Set up SSH

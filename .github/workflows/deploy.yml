@@ -25,14 +25,5 @@ jobs:
             cd ~/oneshop &&
             docker-compose -f oneshop.yml pull react &&
             docker-compose -f oneshop.yml up -d react
-<<<<<<< HEAD
 
-
-
-
-
-            
-=======
-            test fail
->>>>>>> 32a0ca7 (v3)
           "

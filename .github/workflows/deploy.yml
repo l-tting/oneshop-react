@@ -1,0 +1,38 @@
+name: Deploy React App
+
+on:
+  push:
+    branches: [ main ]         # Runs when you push or merge into main
+  pull_request:
+    branches: [ main ]         # Optional: runs on PR to main for preview/deploy
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_DEPLOY_KEY }}
+
+      - name: Deploy React app via Docker Compose
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} "
+            cd ~/oneshop &&
+            docker-compose -f oneshop.yml pull react &&
+            docker-compose -f oneshop.yml up -d react
+<<<<<<< HEAD
+
+
+
+
+
+            
+=======
+            test fail
+>>>>>>> 32a0ca7 (v3)
+          "

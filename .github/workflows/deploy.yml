@@ -2,9 +2,9 @@ name: Deploy React App
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   build-and-deploy:
@@ -32,6 +32,7 @@ jobs:
           ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} "
             cd ~/oneshop &&
             # Make sure Docker Compose is clean and updated
-            docker-compose -f oneshop.yml pull react &&
-            docker-compose -f oneshop.yml up -d --force-recreate --no-deps react
+           docker-compose -f oneshop.yml pull react &&
+           docker-compose -f oneshop.yml down react || true &&
+           docker-compose -f oneshop.yml up -d --force-recreate --no-deps react
           "

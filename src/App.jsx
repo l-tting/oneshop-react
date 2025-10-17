@@ -44,7 +44,7 @@ const App = () => {
           <Route path='/settings' element={<Settings/>}/>
           <Route path='/add-payment-method' element={<AddPaymentMethod/>}/>
         </Route>
-        <Route path='/login' element={<Login/>}/>
+        <Route path='/signin' element={<Login/>}/>
         <Route path='/register' element={<Register/>}/>
         <Route path='/company/register' element={<Company/>}/>
         <Route path='/forgot-password' element={<ForgotPassword/>}/>

@@ -1,4 +1,4 @@
-name: Deploy React App
+name: Deploy OneShop App
 
 on:
   push:
@@ -14,23 +14,48 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # 🐳 Login to Docker Hub
       - name: Log in to Docker Hub
         run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
-      - name: Build React Docker image
+      # ⚙️ Build & Push React Image
+      - name: Build and push React image
         run: |
-          docker build -t lettting/oneshop-react:latest .
+          docker build -t lettting/oneshop-react:latest ./react
           docker push lettting/oneshop-react:latest
 
+      # ⚙️ Build & Push FastAPI Image
+      - name: Build and push FastAPI image
+        run: |
+          docker build -t lettting/f-api-oneshop:latest ./fastapi
+          docker push lettting/f-api-oneshop:latest
+
+      # 🔐 Set up SSH
       - name: Set up SSH
         uses: webfactory/ssh-agent@v0.9.0
         with:
           ssh-private-key: ${{ secrets.SSH_DEPLOY_KEY }}
 
-      - name: Deploy React app via Docker Compose
+      # 🚀 Deploy via Docker Compose
+      - name: Deploy to server
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} "
+            echo '🔍 Checking for Docker Compose v2...'
+            if ! docker compose version >/dev/null 2>&1; then
+              echo 'Installing Docker Compose v2...'
+              sudo mkdir -p ~/.docker/cli-plugins/
+              sudo curl -SL https://github.com/docker/compose/releases/latest/download/docker-compose-linux-x86_64 \
+                -o ~/.docker/cli-plugins/docker-compose
+              sudo chmod +x ~/.docker/cli-plugins/docker-compose
+            fi
+
+            echo '📦 Pulling latest images...'
             cd ~/oneshop &&
-            docker-compose -f oneshop.yml pull react &&
-            docker-compose -f oneshop.yml up -d react
+            docker compose -f oneshop.yml pull
+
+            echo '🚀 Restarting containers...'
+            docker compose -f oneshop.yml up -d
+
+            echo '🧹 Removing old images...'
+            docker image prune -f
           "

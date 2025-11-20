@@ -66,6 +66,7 @@ const company_url = import.meta.env.VITE_COMPANY_URL
 export const companyService = async (companyInfo,plan) => {
     try {
         const urlWithPlan = `${company_url}?plan=${encodeURIComponent(plan)}`;
+        console.log("My urrlll",urlWithPlan)
 
         const response = await axios.post(urlWithPlan, companyInfo, {
             withCredentials: true,

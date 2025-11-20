@@ -41,7 +41,7 @@ export const loginService = async (loginInfo) => {
     } catch (error) {
       console.error("Login failed:", error.response?.data || error.message);
       throw error;
-    }}
+}}
 
 
 
@@ -130,6 +130,7 @@ export const verifyResetCode = async (resetCode, newPassword) => {
     throw error;
   }
 };
+
 
 export const resetPassService = async (resetInfo) =>{
     try{

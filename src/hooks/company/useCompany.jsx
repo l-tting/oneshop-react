@@ -26,13 +26,25 @@ const useCompany = () => {
       setLoading(true);
       setError('');
 
+      // Debugging logs
       console.log("VITE_COMPANY_URL (from env):", import.meta.env.VITE_COMPANY_URL);
       console.log("All env variables:", import.meta.env);
+      console.log("Company data being sent:", companyData);
+      console.log("Plan passed to handleCompany:", plan);
 
+      if (!plan) {
+        console.warn("Warning: 'plan' is undefined or empty!");
+      }
 
-      // Create company with plan and payment info if available
+      // Call backend
       const response = await companyService(companyData, plan);
-      
+
+      console.log("Response from companyService:", response);
+
+      if (!response?.company_id) {
+        console.warn("Warning: company_id is missing in response!");
+      }
+
       // Reset form
       setCompanyData({
         name: '',
@@ -40,8 +52,11 @@ const useCompany = () => {
         email: ''
       });
 
+      // Navigate safely
+      const companyId = response?.company_id || 'unknown';
+      navigate(`/register?company_id=${companyId}`);
+
       toast.success("Company Registered");
-      navigate(`/register?company_id=${response.company_id}`);
       return response;
 
     } catch (error) {

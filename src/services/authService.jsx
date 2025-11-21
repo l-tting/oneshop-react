@@ -63,7 +63,7 @@ export const logoutService = async () => {
 
 
 //company service
-const company_url = import.meta.env.VITE_COMPANY_URL
+// const company_url = import.meta.env.VITE_COMPANY_URL
 export const companyService = async (companyInfo,plan) => {
     try {
         // const urlWithPlan = `${company_url}?plan=${encodeURIComponent(plan)}`;

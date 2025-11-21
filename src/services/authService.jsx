@@ -61,6 +61,7 @@ export const logoutService = async () => {
     }
 };
 
+
 //company service
 const company_url = import.meta.env.VITE_COMPANY_URL
 export const companyService = async (companyInfo,plan) => {

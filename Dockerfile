@@ -1,35 +1,36 @@
-# Stage 1: Build the React app
+# Stage 1: Build
 FROM node:20-alpine AS build
 
-# Set working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json (or pnpm-lock.yaml / yarn.lock)
+# Copy package files and install deps
 COPY package*.json ./
-
-# Install dependencies
 RUN npm install
 
-
-# Copy the rest of the app
+# Copy everything else
 COPY . .
 
-# Build the app
+# Build-time environment variables
+ARG VITE_LOGIN_URL
+ARG VITE_COMPANY_URL
+ARG VITE_RESETPASS_URL
+
+# Make sure Vite uses them
+ENV VITE_LOGIN_URL=$VITE_LOGIN_URL
+ENV VITE_COMPANY_URL=$VITE_COMPANY_URL
+ENV VITE_RESETPASS_URL=$VITE_RESETPASS_URL
+
+# Build React app
 RUN npm run build
 
-# Stage 2: Serve the build using nginx (Alpine)
+# Stage 2: Serve with Nginx
 FROM nginx:alpine
 
-# Copy the build output to nginx html folder
+# Copy build files
 COPY --from=build /app/dist /usr/share/nginx/html
 
-# Copy custom nginx config (optional)
+# Copy custom nginx config if any
 # COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-
-
-# Expose port 80
 EXPOSE 80
-
-# Start nginx
 CMD ["nginx", "-g", "daemon off;"]

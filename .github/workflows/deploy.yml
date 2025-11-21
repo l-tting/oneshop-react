@@ -3,6 +3,8 @@ name: Deploy React App
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
 
 jobs:
   build-and-deploy:
@@ -15,13 +17,9 @@ jobs:
       - name: Log in to Docker Hub
         run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
-      - name: Build React Docker image with env
+      - name: Build React Docker image
         run: |
-          docker build \
-            --build-arg VITE_LOGIN_URL=https://oneshop.co.ke/api/users/login \
-            --build-arg VITE_COMPANY_URL=https://oneshop.co.ke/company/register \
-            --build-arg VITE_RESETPASS_URL=http://localhost:8000/users/reset_password \
-            -t lettting/oneshop-react:latest .
+          docker build -t lettting/oneshop-react:latest .
           docker push lettting/oneshop-react:latest
 
       - name: Set up SSH
@@ -33,7 +31,8 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} "
             cd ~/oneshop &&
-            docker-compose -f oneshop.yml pull react &&
-            docker-compose -f oneshop.yml down react || true &&
-            docker-compose -f oneshop.yml up -d --force-recreate --no-deps react
+            # Make sure Docker Compose is clean and updated
+           docker-compose -f oneshop.yml pull react &&
+           docker-compose -f oneshop.yml down react || true &&
+           docker-compose -f oneshop.yml up -d --force-recreate --no-deps react
           "

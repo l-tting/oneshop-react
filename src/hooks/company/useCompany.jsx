@@ -27,6 +27,8 @@ const useCompany = () => {
       setError('');
 
       console.log("VITE_COMPANY_URL (from env):", import.meta.env.VITE_COMPANY_URL);
+      console.log("All env variables:", import.meta.env);
+
 
       // Create company with plan and payment info if available
       const response = await companyService(companyData, plan);

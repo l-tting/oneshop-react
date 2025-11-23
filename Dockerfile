@@ -1,37 +1,20 @@
-# Stage 1: Build the React app
+# Dockerfile
 FROM node:20-alpine AS build
-
-# Set working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json (or pnpm-lock.yaml / yarn.lock)
 COPY package*.json ./
-
-# Install dependencies
 RUN npm install
-
-# Copy the rest of the app
 COPY . .
 
-# Copy production env file
-COPY .env.production .env
+# Accept env variables as a build argument
+ARG VITE_ENV_FILE
 
-# Build the app
+# Write the env into .env for Vite
+RUN echo "$VITE_ENV_FILE" > .env
+
 RUN npm run build
 
-# Stage 2: Serve the build using nginx (Alpine)
 FROM nginx:alpine
-
-# Copy the build output to nginx html folder
 COPY --from=build /app/dist /usr/share/nginx/html
-
-# Copy custom nginx config (optional)
-# COPY nginx.conf /etc/nginx/conf.d/default.conf
-
-
-
-# Expose port 80
 EXPOSE 80
-
-# Start nginx
 CMD ["nginx", "-g", "daemon off;"]

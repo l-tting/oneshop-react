@@ -6,6 +6,7 @@ COPY package*.json ./
 RUN npm install
 COPY . .
 
+
 # Accept env variables as a build argument
 ARG VITE_ENV_FILE
 
